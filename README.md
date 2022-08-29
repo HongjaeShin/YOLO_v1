@@ -11,6 +11,8 @@ Object Detection 모델은 크게 1-stage detector와 2-stage detector로 나눌
 객체인식을 수행하는 모델의 구조는 크게 다음과 같이 설명할 수 있다.  
 Input Image -> Backbone(feature extract) -> Head(object detection)
 (이 떄 Backbone은 특징 추출이 목적이기 때문에 특징 추출에 최적화된 Classification 모델을 사용한다.)
+<img width="908" alt="image" src="https://user-images.githubusercontent.com/112379771/187166940-a72c6d9f-b058-43bc-8066-81a548d32ffc.png"><sup id="a1">[1](#f1)</sup>
+
 YOLO v1에서는 Backbone 구조로 개발 당시 성능이 좋았던 VGG를 변환하여 DarkNet이라는 모델을 만들어 사용하였다.  
 224 * 224 크기의 ImageNet으로 pretrain된 모델을 fine tuning하여 사용하였으며 Inference 시에는 해상도를 위해 448 * 448 크기의 이미지를 사용하였다.  
   
@@ -29,7 +31,7 @@ YOLO v1의 Head에서 진행하는 과정을 간단히 정리하면  다음과 �
 학습에 사용될 Loss는 다음과 같이 간단화할 수 있고 자세한 식은 아래의 그림과 같다.  
 $Loss = Localization + Confidence + Classification$
 
-![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbpD927%2FbtqRVpnLCGe%2FelD6wAkeSotSm1NYsW9jx0%2Fimg.png)
+![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbpD927%2FbtqRVpnLCGe%2FelD6wAkeSotSm1NYsW9jx0%2Fimg.png)<sup id="a1">[2](#f2)</sup>
 
 $\lambda_{coord}$ : Localization loss에 높은 가중치를 주기 위해 논문에서는 5로 설정  
 $\lambda_{noobj}$ : 객체가 존재하지 않는 background의 영향을 낮추기 위해 논문에서는 0.5로 설정  
@@ -43,3 +45,7 @@ YOLO v1의 특징 : 속도는 빠르지만 작은 객체를 잘 탐지하지 못
 ### 논문 공부하다가 생긴 의문
 - 각 Grid는 Backbone을 통해 계산된 Feature map을 이용하여 Bounding Box를 계산할텐데 어떠한 과정을 통해 만들어질까?
 - 개발 당시 성능이 좋았던 VGG를 변형한 DarkNet을 Backbone으로 이용했다고 하는데 비교적 최근에 개발된 다른 모델을 사용하면 성능이 어떻게 나올까?
+
+출처  
+<b id="f1">1</b> https://www.youtube.com/watch?v=ccnL_ODHfys  
+<b id="f2">2</b> https://herbwood.tistory.com/14?category=867198
