@@ -43,9 +43,28 @@ YOLO v1의 특징 : 속도는 빠르지만 작은 객체를 잘 탐지하지 못
 (loss를 학습하면서 두 Box 중 IoU가 큰 것만 학습하는데, 큰 객체의 경우 박스간 IoU 차이가 커서 잘 판별할 수 있지만, 작은 객체는 약간의 차이로 IoU의 차이가 뒤집힐 수 있어 잘 못찾는다고 한다. >> YOLO v3에서 해결)
 
 ### 논문 공부하다가 생긴 의문
-- 각 Grid는 Backbone을 통해 계산된 Feature map을 이용하여 Bounding Box를 계산할텐데 어떠한 과정을 통해 만들어질까?
-- 개발 당시 성능이 좋았던 VGG를 변형한 DarkNet을 Backbone으로 이용했다고 하는데 비교적 최근에 개발된 다른 모델을 사용하면 성능이 어떻게 나올까?
+- Q1. 각 Grid는 Backbone을 통해 계산된 Feature map을 이용하여 Bounding Box를 계산할텐데 어떠한 과정을 통해 만들어질까?
+- Q2. 개발 당시 성능이 좋았던 VGG를 변형한 DarkNet을 Backbone으로 이용했다고 하는데 비교적 최근에 개발된 다른 모델을 사용하면 성능이 어떻게 나올까?
 
 출처  
 <b id="f1">1</b> https://www.youtube.com/watch?v=ccnL_ODHfys  
 <b id="f2">2</b> https://herbwood.tistory.com/14?category=867198
+
+### Code review  
+> https://www.youtube.com/watch?v=n9_XyCGr-MI&t=2590s 참고
+#### 1. model.py
+darknet과 YOLO의 모델을 구현.
+architecture_config 리스트를 이용한 CNN 정의. 처음보는 형태의 선언 방법인데 나중에 다른 모델 구현해볼 때 사용해보면 좋을 것 같다.  
+본 논문은 Batch Normalization보다 이전의 논문이라 BatchNorm을 사용하지 않지만 구현할 때는 정규화의 효과를 보기 위하여 사용하였다.
+
+#### 2. loss.py  
+loss function을 구현하기 위한 class를 선언.  
+
+
+
+#### 코드 구현 중 생긴 의문  
+- Q1. leakyReLU와 ReLU의 사용을 나누는 기준
+  - A1. 먼저, Sigmoid 함수가 아닌 ReLu를 사용하는 이유는 sigmoid 함수가 반복되면 sigmoid함수의 양끝과 원점 근처의 기울기때문에 Gradient vanishing, exploding이 발생하기 때문이다.
+    반면에 ReLU는 0이하에서 0, 0이상에서 1이기 때문에 위의 현상을 막는데 도움이 되지만 0, 1의 값만 갖기 때문에 어떠한 레이어의 모든 노드의 기울기가 0이 되는 knockout 현상이 발생할 수도 있다.
+    이를 해결하기 위한 함수가 leakyReLU이다. 하지만 임계치보다 작으면 0, 크면 그대로 값을 출력하기에 연산비용이 작은 ReLU를 사용하는 경우가 더 많다고 한다. 추측하기론 ReLU를 먼저 사용하되 ReLU에
+    의해 문제가 발생한다면 leakyReLU를 고려하는게 아닐까 생각한다.
