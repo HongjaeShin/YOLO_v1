@@ -1,4 +1,3 @@
-# YOLO_v1_to_v6
 
 ## YOLO V1
 ### Simple contents
